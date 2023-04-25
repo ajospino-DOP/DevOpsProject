@@ -5,6 +5,7 @@ import (
 )
 
 func New(addr string) *http.Server{
+	
 	routes()
 	return &http.Server{
 		Addr: addr,
