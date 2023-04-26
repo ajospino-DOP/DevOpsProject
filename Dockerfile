@@ -6,10 +6,12 @@ WORKDIR /app
 
 COPY . .
 
+COPY .env ./.env
+
+RUN cat .env
+
 RUN go mod tidy
 
 RUN go build -o app -v .
-
-RUN cat .env
 
 ENTRYPOINT [ "./app" ]
