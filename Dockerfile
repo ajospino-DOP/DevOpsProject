@@ -6,11 +6,7 @@ WORKDIR /app
 
 COPY . .
 
-RUN touch .env
-
-COPY .env ./.env
-
-RUN cat .env
+COPY .env .env
 
 RUN go mod tidy
 
