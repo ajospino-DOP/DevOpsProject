@@ -2,12 +2,12 @@ FROM golang:1.20
 
 RUN apt-get update
 
-WORKDIR /usr/src/app
+WORKDIR /app
 
 COPY . .
 
 RUN go mod tidy
 
-EXPOSE 8060
+RUN go build -o app -v ./..
 
-RUN go run main.go
+ENTRYPOINT [ "./app" ]
