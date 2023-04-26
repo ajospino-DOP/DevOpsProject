@@ -10,4 +10,4 @@ RUN go mod tidy
 
 EXPOSE 8060
 
-RUN go main.go
+RUN go run main.go
