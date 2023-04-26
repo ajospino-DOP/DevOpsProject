@@ -6,6 +6,8 @@ WORKDIR /app
 
 COPY . .
 
+RUN touch .env
+
 COPY .env ./.env
 
 RUN cat .env
