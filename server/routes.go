@@ -4,5 +4,5 @@ import "net/http"
 
 func routes() {
 	http.HandleFunc("/", index)
-	http.HandleFunc("/info", info)
+	http.HandleFunc("/info/", info)
 }

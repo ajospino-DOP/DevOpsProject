@@ -18,32 +18,28 @@ var envErr = godotenv.Load(".env")
 
 
 type Info struct {
-	name string
-	value string
+	Name string
+	Value string
 }
 
 var savedInfo []*Info = []*Info{}
 
 var uri = os.Getenv("MONGODB_URI")
 
-
 func initDB() (*mongo.Client){
-	serverAPI := options.ServerAPI(options.ServerAPIVersion1)
-	opts := options.Client().ApplyURI(uri).SetServerAPIOptions(serverAPI)
-	
-	client, err := mongo.Connect(context.TODO(), opts)
+
+	client, err := mongo.Connect(context.TODO(), options.Client().ApplyURI(uri))
 	if err != nil {
+		fmt.Printf("Client unnable to connect %v", err)
 		panic(err)
 	}
-	defer func() {
-		if err = client.Disconnect(context.TODO()); err != nil {
-			panic(err)
-		}
-	}()
-
+	
 	return client
 }
 
+ func discDB(client *mongo.Client) {
+	_ = client.Disconnect(context.TODO())
+}
 
 
 func index(w http.ResponseWriter, r *http.Request) {
@@ -64,29 +60,29 @@ func info(w http.ResponseWriter, r *http.Request) {
 		sendInfo(w, r)
 	default:
 		w.WriteHeader(http.StatusMethodNotAllowed)
-		fmt.Fprintf(w, "Method not allowed")
+		fmt.Fprintf(w, r.Method)
 		return
 	}
 }	
 
 func listInfo(w http.ResponseWriter, r *http.Request){
 	w.Header().Set("Content-Type", "applicaton/json")
+	savedInfo = getDB()
 	json.NewEncoder(w).Encode(savedInfo)
 }
 
 func sendInfo(w http.ResponseWriter, r *http.Request){
-	newInfo := &Info{}
+	newInfo :=  &Info{}
 	err := json.NewDecoder(r.Body).Decode(newInfo)
 	if(err != nil){
 		w.WriteHeader(http.StatusBadRequest)
 		fmt.Fprintf(w, "%v", err)
 		return
 	}
-
-	savedInfo = append(savedInfo, newInfo)
+	saveDB(newInfo)
 }
 
-func getDB(){
+func getDB()([]*Info){
 	client := initDB()
 	collection := client.Database("DOP").Collection("info")
 	filter := bson.D{}
@@ -95,15 +91,33 @@ func getDB(){
 		panic(err)
 	}
 	
+	var results []*Info
+	if err = res.All(context.TODO(), &results); err != nil {
+		panic(err)
+	}
+
+	return results
+	/**
+	for _, result := range results {
+		res.Decode(&result)
+		output, err := json.Marshal(result)
+		if err != nil {
+			panic(err)
+		}
+		fmt.Printf("%s\n", output)
+	}
+	*/
 }
 
 
-func saveDB(i Info){
+func saveDB(i *Info){
 	client := initDB()
 	collection := client.Database("DOP").Collection("info")
-	res, err := collection.InsertOne(context.Background(),i)
+	res, err := collection.InsertOne(context.TODO(),i)
 	
-	if err != nil { panic(err) }
+	if err != nil { 
+		fmt.Printf("Insert error %v", err)
+		panic(err) }
 	
 	id := res.InsertedID
 
