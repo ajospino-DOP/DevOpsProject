@@ -8,6 +8,6 @@ COPY . .
 
 RUN go mod tidy
 
-RUN go build -o app -v ./..
+RUN go build -o app -v .
 
 ENTRYPOINT [ "./app" ]
