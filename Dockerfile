@@ -3,13 +3,14 @@ FROM golang:1.20
 RUN apt-get update
 
 ARG MONGODB_URI
+ENV MONGODB_URI = ${MONGODB_URI}
+
+RUN touch /.env                                                                                                     
+RUN printenv > /.env 
 
 WORKDIR /app
 
 COPY . .
-
-RUN touch .env
-RUN echo ${MONGODB_URI} > .env
 
 RUN go mod tidy
 
