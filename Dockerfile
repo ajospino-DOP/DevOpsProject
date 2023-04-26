@@ -5,8 +5,8 @@ RUN apt-get update
 ARG MONGODB_URI
 ENV MONGODB_URI = ${MONGODB_URI}
 
-RUN touch /.env                                                                                                     
-RUN printenv > /.env 
+RUN touch .env                                                                                                     
+RUN printenv > .env 
 
 WORKDIR /app
 
