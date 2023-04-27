@@ -54,6 +54,7 @@ func indexReg(w http.ResponseWriter, r *http.Request)(error){
 	return nil
 }
 
+//This is the index function
 func index(w http.ResponseWriter, r *http.Request){
 	indexReg(w,r)
 }
