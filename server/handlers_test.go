@@ -1,11 +1,14 @@
 package server
 
 import (
+	"encoding/json"
 	"net/http"
 	"net/http/httptest"
 	"os"
-	"reflect"
+	"strings"
 	"testing"
+
+	"github.com/joho/godotenv"
 )
 
 var s *http.Server
@@ -19,113 +22,39 @@ func TestMain(m *testing.M){
 
 
 func Test_index(t *testing.T) {
-        type args struct {
-                w http.ResponseWriter
-                r *http.Request
-        }
-        tests := []struct {
-                name string
-                args args
-        }{
-                {
-					name: "index",
-					args: args{
-						httptest.NewRecorder(),
-						r, _:= http.NewRequest("GET","/"),
-					},
-
-				},
-        }
-        for _, tt := range tests {
-                t.Run(tt.name, func(t *testing.T) {
-                        index(tt.args.w, tt.args.r)
-                })
-        }
-}
-
-func Test_info(t *testing.T) {
-        type args struct {
-                w http.ResponseWriter
-                r *http.Request
-        }
-        tests := []struct {
-                name string
-                args args
-        }{
-                // TODO: Add test cases.
-        }
-        for _, tt := range tests {
-                t.Run(tt.name, func(t *testing.T) {
-                        info(tt.args.w, tt.args.r)
-                })
-        }
+		w :=  httptest.NewRecorder()
+		r, _ := http.NewRequest(http.MethodGet,"/", nil)
+		t.Run("indexRegTest", func(t *testing.T) {
+			err := indexReg(w, r)
+			if(err!=nil) {t.Errorf("Unexpected error: %s", err)}
+		})
 }
 
 func Test_listInfo(t *testing.T) {
-        type args struct {
-                w http.ResponseWriter
-                r *http.Request
-        }
-        tests := []struct {
-                name string
-                args args
-        }{
-                // TODO: Add test cases.
-        }
-        for _, tt := range tests {
-                t.Run(tt.name, func(t *testing.T) {
-                        listInfo(tt.args.w, tt.args.r)
-                })
-        }
+	godotenv.Load("../.env")
+	w :=  httptest.NewRecorder()
+	r, _ := http.NewRequest(http.MethodGet,"/info", nil)
+	t.Run("listInfoTest", func(t *testing.T) {
+		err := listInfo(w, r)
+		if(err!=nil) {t.Errorf("Unexpected error: %s", err)}
+	})
 }
 
 func Test_sendInfo(t *testing.T) {
-        type args struct {
-                w http.ResponseWriter
-                r *http.Request
-        }
-        tests := []struct {
-                name string
-                args args
-        }{
-                // TODO: Add test cases.
-        }
-        for _, tt := range tests {
-                t.Run(tt.name, func(t *testing.T) {
-                        sendInfo(tt.args.w, tt.args.r)
-                })
-        }
+	godotenv.Load("../.env")
+	payloads := &Info{Name: "testFile",
+	Value: "17",}
+	body, err := json.Marshal(payloads)
+	if(err != nil){
+		t.Errorf("Unexpected error: %s", err)
+	}
+
+	w :=  httptest.NewRecorder()
+	r, _ := http.NewRequest(http.MethodPost,"/info", strings.NewReader(string(body)))
+	t.Run("sendInfoTest", func(t *testing.T) {
+		err := sendInfo(w, r)
+		if(err!=nil) {t.Errorf("Unexpected error: %s", err)}
+	})
 }
 
-func Test_getDB(t *testing.T) {
-        tests := []struct {
-                name string
-                want []*Info
-        }{
-                // TODO: Add test cases.
-        }
-        for _, tt := range tests {
-                t.Run(tt.name, func(t *testing.T) {
-                        if got := getDB(); !reflect.DeepEqual(got, tt.want) {
-                                t.Errorf("getDB() = %v, want %v", got, tt.want)
-                        }
-                })
-        }
-}
 
-func Test_saveDB(t *testing.T) {
-        type args struct {
-                i *Info
-        }
-        tests := []struct {
-                name string
-                args args
-        }{
-                // TODO: Add test cases.
-        }
-        for _, tt := range tests {
-                t.Run(tt.name, func(t *testing.T) {
-                        saveDB(tt.args.i)
-                })
-        }
-}

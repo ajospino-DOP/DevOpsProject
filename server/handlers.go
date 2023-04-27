@@ -3,6 +3,7 @@ package server
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"net/http"
 	"os"
@@ -24,10 +25,10 @@ type Info struct {
 
 var savedInfo []*Info = []*Info{}
 
-var uri = os.Getenv("MONGODB_URI")
+
 
 func initDB() (*mongo.Client){
-
+	var uri = os.Getenv("MONGODB_URI")
 	client, err := mongo.Connect(context.TODO(), options.Client().ApplyURI(uri))
 	if err != nil {
 		fmt.Printf("Client unnable to connect %v", err)
@@ -41,14 +42,19 @@ func initDB() (*mongo.Client){
 	_ = client.Disconnect(context.TODO())
 }
 
-
-func index(w http.ResponseWriter, r *http.Request) {
+func indexReg(w http.ResponseWriter, r *http.Request)(error){
 	if(r.Method != http.MethodGet){
 		w.WriteHeader(http.StatusMethodNotAllowed)
 		fmt.Fprintf(w, "Method not allowed")
-		return
+		err := errors.New("Method not allowed")
+		return err
 	}
 	fmt.Fprintf(w, "Welcome visitor")
+	return nil
+}
+
+func index(w http.ResponseWriter, r *http.Request){
+	indexReg(w,r)
 }
 
 func info(w http.ResponseWriter, r *http.Request) {
@@ -65,21 +71,28 @@ func info(w http.ResponseWriter, r *http.Request) {
 	}
 }	
 
-func listInfo(w http.ResponseWriter, r *http.Request){
+func listInfo(w http.ResponseWriter, r *http.Request)(error){
 	w.Header().Set("Content-Type", "applicaton/json")
 	savedInfo = getDB()
-	json.NewEncoder(w).Encode(savedInfo)
+	err := json.NewEncoder(w).Encode(savedInfo)
+	if(err != nil){
+		w.WriteHeader(http.StatusBadRequest)
+		fmt.Fprintf(w, "%v", err)
+		return err
+	}
+	return nil
 }
 
-func sendInfo(w http.ResponseWriter, r *http.Request){
+func sendInfo(w http.ResponseWriter, r *http.Request)(error){
 	newInfo :=  &Info{}
 	err := json.NewDecoder(r.Body).Decode(newInfo)
 	if(err != nil){
 		w.WriteHeader(http.StatusBadRequest)
 		fmt.Fprintf(w, "%v", err)
-		return
+		return err
 	}
 	saveDB(newInfo)
+	return nil
 }
 
 func getDB()([]*Info){
