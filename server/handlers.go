@@ -42,6 +42,7 @@ func initDB() (*mongo.Client){
 	_ = client.Disconnect(context.TODO())
 }
 
+//New function that returns error
 func indexReg(w http.ResponseWriter, r *http.Request)(error){
 	if(r.Method != http.MethodGet){
 		w.WriteHeader(http.StatusMethodNotAllowed)
