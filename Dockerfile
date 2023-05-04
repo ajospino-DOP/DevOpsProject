@@ -14,7 +14,7 @@ COPY . .
 
 RUN go mod tidy
 
-#Multistage to avoid image size being unmanageable
+#Multistage to avoid image size being unmanageable - try 2
 
 FROM golang:1.20.4-alpine3.16 as main
 
