@@ -20,8 +20,10 @@ RUN go build -o app -v .
 
 FROM golang:1.20.4-alpine3.16 as main
 
-COPY --from=build /app /
+COPY --from=build /app /app
+
+WORKDIR /app
 
 RUN ls -d
 
-ENTRYPOINT [ "app" ]
+ENTRYPOINT [ "./app" ]
