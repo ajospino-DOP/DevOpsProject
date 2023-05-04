@@ -30,6 +30,7 @@ func Test_index(t *testing.T) {
 		})
 }
 
+//Jenkins test for update status
 func Test_listInfo(t *testing.T) {
 	godotenv.Load("../.env")
 	w :=  httptest.NewRecorder()
