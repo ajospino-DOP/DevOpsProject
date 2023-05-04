@@ -22,10 +22,6 @@ FROM golang:1.20.4-alpine3.16 as main
 
 COPY --from=build /app /
 
-RUN ls -a /src
-
-RUN echo 1
-
-RUN ls -a /bin
+RUN ls -d
 
 ENTRYPOINT [ "app" ]
