@@ -24,4 +24,4 @@ COPY --from=build /app /
 
 RUN ls -a
 
-ENTRYPOINT [ "./app/app" ]
+ENTRYPOINT [ "app" ]
