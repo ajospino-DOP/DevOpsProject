@@ -1,4 +1,4 @@
-FROM golang:1.20
+FROM golang:1.20 as build
 
 RUN apt-get update
 
@@ -13,6 +13,10 @@ WORKDIR /app
 COPY . .
 
 RUN go mod tidy
+
+FROM golang:1.20.4-alpine3.16 as main
+
+COPY --from=build /app /
 
 RUN go build -o app -v .
 
