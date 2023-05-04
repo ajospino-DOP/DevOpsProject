@@ -14,6 +14,8 @@ COPY . .
 
 RUN go mod tidy
 
+#Multistage to avoid image size being unmanageable
+
 FROM golang:1.20.4-alpine3.16 as main
 
 COPY --from=build /app /
