@@ -24,6 +24,8 @@ COPY --from=build /app /app
 
 WORKDIR /app
 
+#test
+
 RUN ls -d
 
 ENTRYPOINT [ "./app" ]
