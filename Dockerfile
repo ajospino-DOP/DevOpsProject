@@ -5,10 +5,10 @@ RUN apt-get update
 ARG MONGODB_URI
 ENV MONGODB_URI = ${MONGODB_URI}
 
+WORKDIR /app
+
 RUN touch .env                                                                                                     
 RUN printenv > .env 
-
-WORKDIR /app
 
 COPY . .
 
@@ -20,12 +20,8 @@ RUN go build -o app -v .
 
 FROM golang:1.20.4-alpine3.16 as main
 
-COPY --from=build /app /app
-
-WORKDIR /app
-
-#test
+COPY --from=build /app .
 
 RUN ls -l
 
-ENTRYPOINT [ "app" ]
+ENTRYPOINT [ "./app" ]
