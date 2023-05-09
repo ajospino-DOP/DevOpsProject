@@ -12,3 +12,5 @@ RUN go mod tidy
 RUN go build -o app -v .
 
 ENTRYPOINT [ "./app" ]
+
+#re testing dockerfile
