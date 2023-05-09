@@ -28,4 +28,4 @@ WORKDIR /app
 
 RUN ls -l
 
-ENTRYPOINT [ "./app" ]
+ENTRYPOINT [ "app/app" ]
