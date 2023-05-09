@@ -26,6 +26,6 @@ WORKDIR /app
 
 #test
 
-RUN ls -d
+RUN ls -l
 
 ENTRYPOINT [ "./app" ]
