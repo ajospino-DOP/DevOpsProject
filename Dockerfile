@@ -11,6 +11,10 @@ RUN go mod tidy
 
 RUN go build -o app -v .
 
+FROM alpine:3.16 as main
+
+COPY --from=build /app /
+
 ENTRYPOINT [ "./app" ]
 
 #re testing dockerfile
