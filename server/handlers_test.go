@@ -42,8 +42,8 @@ func Test_listInfo(t *testing.T) {
 
 func Test_sendInfo(t *testing.T) {
 	godotenv.Load("../.env")
-	payloads := &Info{Name: "testFile",
-	Value: "17",}
+	payloads := &Info{Name: "testFile2",
+	Value: "18",}
 	body, err := json.Marshal(payloads)
 	if(err != nil){
 		t.Errorf("Unexpected error: %s", err)
