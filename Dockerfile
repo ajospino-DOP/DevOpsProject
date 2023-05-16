@@ -16,5 +16,3 @@ FROM alpine:3.16 as main
 COPY --from=build /app /
 
 ENTRYPOINT [ "./app" ]
-
-#re testing dockerfile
