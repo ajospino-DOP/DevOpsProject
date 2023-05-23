@@ -1,0 +1,25 @@
+pipeline{
+    agent any
+    environment{
+        AWS_KEY = 'AWS-Key'
+    }
+    steps {
+        stage('Build'){
+            git branch: 'main', url: 'https://github.com/ajospino/DevOpsProject.git'
+            sh 'touch .env'
+            sh 'printenv > .env'
+            sh 'go version'
+        }
+        stage('Testing'){
+            sh 'go run tests'
+        }
+        stage('Docker-building'){
+            sh 'docker build dop .'
+        }
+        stage('Deploying'){
+            withAWS(credentials: "${AWS_KEY}"){
+                sh 'aws '
+            }
+        }
+    }
+}
