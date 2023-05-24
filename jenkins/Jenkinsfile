@@ -1,24 +1,28 @@
 pipeline{
-    agent any
+    docker {image 'golang:1.20.4-alpine3.16'}
     environment{
-        AWS_KEY = 'AWS-Key'
+        AWS_KEY = env.AWS_KEY
+        AWS_REGION = 'us-east-1'
     }
     steps {
+        stage('Checkout'){
+             git branch: 'main', url: 'git@github.com:ajospino/DevOpsProject.git', credentials: ''
+        }
         stage('Build'){
-            git branch: 'main', url: 'https://github.com/ajospino/DevOpsProject.git'
             sh 'touch .env'
             sh 'printenv > .env'
             sh 'go version'
+            sh 'go build -o app .'
         }
         stage('Testing'){
-            sh 'go run tests'
+            sh 'go test ./...'
         }
         stage('Docker-building'){
             sh 'docker build dop .'
         }
         stage('Deploying'){
             withAWS(credentials: "${AWS_KEY}"){
-                sh 'aws '
+                sh "aws ecr get-login-password --region ${AWS_REGION} | docker login --username AWS --password-stdin ${AWS_KEY}.dkr.ecr.${AWS_REGION}.amazonaws.com "
             }
         }
     }
