@@ -5,10 +5,6 @@ pipeline{
         AWS_REGION = 'us-east-1'
     }
     steps {
-        stage('Setup'){
-            sh 'apk add --no-cache aws-cli'
-            sh 'aws --version'
-        }
         stage('Build'){
             sh 'touch .env'
             sh 'printenv > .env'
