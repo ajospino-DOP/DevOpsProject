@@ -9,7 +9,7 @@ COPY . .
 
 RUN go mod tidy
 
-RUN go build -o app -v .
+RUN go build -o app .
 
 FROM alpine:3.16 as main
 
