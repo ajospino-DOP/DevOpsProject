@@ -5,8 +5,9 @@ pipeline{
         AWS_REGION = 'us-east-1'
     }
     steps {
-        stage('Checkout'){
-             git branch: 'main', url: 'git@github.com:ajospino/DevOpsProject.git', credentials: ''
+        stage('Setup'){
+            sh 'apk add --no-cache aws-cli'
+            sh 'aws --version'
         }
         stage('Build'){
             sh 'touch .env'
