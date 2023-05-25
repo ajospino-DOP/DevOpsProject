@@ -1,8 +1,7 @@
 pipeline{
-    docker {image 'golang:1.20.4-alpine3.16'}
+    agent any
     environment{
-        AWS_KEY = env.AWS_KEY
-        AWS_REGION = 'us-east-1'
+        AWS_REGION = 'us-east-2'
     }
     steps {
         stage('Build'){
@@ -15,11 +14,13 @@ pipeline{
             sh 'go test ./...'
         }
         stage('Docker-building'){
-            sh 'docker build dop .'
+            sh 'docker build -t dop:latest .'
         }
         stage('Deploying'){
-            withAWS(credentials: "${AWS_KEY}"){
-                sh "aws ecr get-login-password --region ${AWS_REGION} | docker login --username AWS --password-stdin ${AWS_KEY}.dkr.ecr.${AWS_REGION}.amazonaws.com "
+            withAWS(credentials: 'AWS_KEY_V2', region: env.AWS_REGION){
+                sh "aws ecr get-login-password --region region | docker login --username AWS --password-stdin 467346434923.dkr.ecr.region.amazonaws.com"
+                sh 'docker tag dop:latest 467346434923.dkr.ecr.us-east-2.amazonaws.com/dop:latest'
+                sh 'docker push 467346434923.dkr.ecr.us-east-2.amazonaws.com/dop:latest'
             }
         }
     }
