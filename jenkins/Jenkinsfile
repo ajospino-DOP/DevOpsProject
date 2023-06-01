@@ -3,24 +3,32 @@ pipeline{
     environment{
         AWS_REGION = 'us-east-2'
     }
-    steps {
+    stages {
         stage('Build'){
-            sh 'touch .env'
-            sh 'printenv > .env'
-            sh 'go version'
-            sh 'go build -o app .'
+            steps{
+                sh 'touch .env'
+                sh 'printenv > .env'
+                sh 'go version'
+                sh 'go build -o app .'
+            }
         }
         stage('Testing'){
-            sh 'go test ./...'
+            steps{
+                sh 'go test ./...'
+            }
         }
         stage('Docker-building'){
-            sh 'docker build -t dop:latest .'
+            steps{
+                sh 'docker build -t dop:latest .'
+            }
         }
         stage('Deploying'){
-            withAWS(credentials: 'AWS_KEY_V2', region: env.AWS_REGION){
-                sh "aws ecr get-login-password --region region | docker login --username AWS --password-stdin 467346434923.dkr.ecr.region.amazonaws.com"
-                sh 'docker tag dop:latest 467346434923.dkr.ecr.us-east-2.amazonaws.com/dop:latest'
-                sh 'docker push 467346434923.dkr.ecr.us-east-2.amazonaws.com/dop:latest'
+            steps{
+                    withAWS(credentials: 'AWS_KEY_V2', region: env.AWS_REGION){
+                    sh "aws ecr get-login-password --region region | docker login --username AWS --password-stdin 467346434923.dkr.ecr.region.amazonaws.com"
+                    sh 'docker tag dop:latest 467346434923.dkr.ecr.us-east-2.amazonaws.com/dop:latest'
+                    sh 'docker push 467346434923.dkr.ecr.us-east-2.amazonaws.com/dop:latest'
+                }
             }
         }
     }
