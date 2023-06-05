@@ -1,5 +1,7 @@
 pipeline{
-    agent any
+    agent {
+        label 'AGA-Agent'
+    }
     environment{
         AWS_REGION = 'us-east-2'
     }
