@@ -1,5 +1,7 @@
 pipeline{
-    agent any
+    agent {
+        label 'AGA-Agent'
+    }
     environment{
         AWS_REGION = 'us-east-2'
     }
@@ -15,6 +17,13 @@ pipeline{
         stage('Testing'){
             steps{
                 sh 'go test ./...'
+            }
+        }
+        stage('SonarQube analysis'){
+            steps{
+                withSonarQubeEnv('sonarcloud'){
+
+                }
             }
         }
         stage('Docker-building'){
