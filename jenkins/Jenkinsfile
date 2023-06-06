@@ -8,9 +8,7 @@ pipeline{
     stages {
         stage('Build'){
             steps{
-                sh 'touch .env'
-                sh 'printenv > .env'
-                sh 'go version'
+                sh 'touch .env && printenv > .env'
                 sh 'go build -o app .'
             }
         }
