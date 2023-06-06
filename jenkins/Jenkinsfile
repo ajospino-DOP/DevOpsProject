@@ -19,7 +19,7 @@ pipeline{
         }
         stage('SonarQube analysis'){
             steps{
-                withSonarQubeEnv('sonarcloud'){
+                withSonarQubeEnv('sonar-cloud'){
 
                 }
             }
