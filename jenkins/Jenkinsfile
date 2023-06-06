@@ -18,10 +18,16 @@ pipeline{
             }
         }
         stage('SonarQube analysis'){
-            steps{
-                withSonarQubeEnv('sonar-cloud'){
-
-                }
+            def scannerHome = tool 'SonarScanner 4.0';
+            withSonarQubeEnv('sonar-cloud'){
+                sh "${scannerHome}/bin/sonar-scanner"
+            }
+        }
+        stage("Quality Gate") {
+            steps {
+              timeout(time: 15, unit: 'MINUTES') {
+                waitForQualityGate abortPipeline: true
+              }
             }
         }
         stage('Docker-building'){
