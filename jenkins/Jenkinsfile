@@ -4,6 +4,7 @@ pipeline{
     }
     environment{
         AWS_REGION = 'us-east-2'
+        scannerHome = tool 'SonarScanner'
     }
     stages {
         stage('Build'){
@@ -18,7 +19,6 @@ pipeline{
             }
         }
         stage('SonarQube analysis'){
-            def scannerHome = tool 'SonarScanner';
             steps{
                 withSonarQubeEnv('sonar-cloud'){
                     sh "${scannerHome}/bin/sonar-scanner"
