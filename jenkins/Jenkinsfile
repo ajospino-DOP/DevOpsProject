@@ -15,7 +15,7 @@ pipeline{
         }
         stage('Testing'){
             steps{
-                sh 'go test ./...'
+                sh 'go test -v ./...'
             }
         }
         stage('SonarQube analysis'){
