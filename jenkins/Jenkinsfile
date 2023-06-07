@@ -40,7 +40,7 @@ pipeline{
         stage('Deploying'){
             steps{
                     withAWS(credentials: 'AWS-Key', region: env.AWS_REGION){
-                    sh "aws ecr get-login-password --region region | docker login --username AWS --password-stdin 467346434923.dkr.ecr.region.amazonaws.com"
+                    sh "aws ecr get-login-password --region ${env.AWS_REGION} | docker login --username AWS --password-stdin 467346434923.dkr.ecr.${env.AWS_REGION}.amazonaws.com"
                     sh 'docker tag dop:latest 467346434923.dkr.ecr.us-east-2.amazonaws.com/dop:latest'
                     sh 'docker push 467346434923.dkr.ecr.us-east-2.amazonaws.com/dop:latest'
                 }
