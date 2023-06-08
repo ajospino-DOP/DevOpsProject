@@ -62,7 +62,7 @@ func index(w http.ResponseWriter, r *http.Request){
 func info(w http.ResponseWriter, r *http.Request) {
 	switch r.Method{
 	case http.MethodGet:
-		fmt.Fprintf(w, "Welcome to the X application, simply send values to save with your request or reload this page to see past values")
+		fmt.Fprintf(w, "Welcome to the X application, simply send values to save with your request or reload this page to see past values\n\n")
 		listInfo(w, r)
 	case http.MethodPost:
 		sendInfo(w, r)

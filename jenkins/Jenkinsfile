@@ -1,24 +1,49 @@
 pipeline{
-    agent any
-    environment{
-        AWS_KEY = 'AWS-Key'
+    agent {
+        label 'AGA-Agent'
     }
-    steps {
+    environment{
+        AWS_REGION = 'us-east-2'
+        scannerHome = tool 'SonarScanner'
+    }
+    stages {
         stage('Build'){
-            git branch: 'main', url: 'https://github.com/ajospino/DevOpsProject.git'
-            sh 'touch .env'
-            sh 'printenv > .env'
-            sh 'go version'
+            steps{
+                sh(script: "/bin/bash -c 'touch .env && printenv > .env'")
+                sh 'go build -o app .'
+            }
         }
         stage('Testing'){
-            sh 'go run tests'
+            steps{
+                sh 'go test -v ./...'
+            }
+        }
+        stage('SonarQube analysis'){
+            steps{
+                withSonarQubeEnv('sonar-cloud'){
+                    sh "${scannerHome}/bin/sonar-scanner"
+                }
+            }
+        }
+        stage("Quality Gate"){
+            steps {
+              timeout(time: 15, unit: 'MINUTES') {
+                waitForQualityGate abortPipeline: true
+              }
+            }
         }
         stage('Docker-building'){
-            sh 'docker build dop .'
+            steps{
+                sh 'docker build -t dop:latest .'
+            }
         }
-        stage('Deploying'){
-            withAWS(credentials: "${AWS_KEY}"){
-                sh 'aws '
+        stage('Delivering'){
+            steps{
+                    withAWS(credentials: 'AWS-Key', region: env.AWS_REGION){
+                    sh "aws ecr get-login-password --region ${env.AWS_REGION} | docker login --username AWS --password-stdin 467346434923.dkr.ecr.${env.AWS_REGION}.amazonaws.com"
+                    sh 'docker tag dop:latest 467346434923.dkr.ecr.us-east-2.amazonaws.com/dop:latest'
+                    sh 'docker push 467346434923.dkr.ecr.us-east-2.amazonaws.com/dop:latest'
+                }
             }
         }
     }

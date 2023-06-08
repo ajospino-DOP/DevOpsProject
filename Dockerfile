@@ -1,4 +1,4 @@
-FROM golang:1.20.4-alpine3.16 as build
+FROM golang:alpine AS build
 
 WORKDIR /app
 
@@ -9,9 +9,9 @@ COPY . .
 
 RUN go mod tidy
 
-RUN go build -o app -v .
+RUN go build -o app .
 
-FROM alpine:3.16 as main
+FROM alpine AS main
 
 COPY --from=build /app /
 
