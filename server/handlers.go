@@ -26,7 +26,7 @@ type Info struct {
 var savedInfo []*Info = []*Info{}
 
 
-
+//Simple test for pipeline
 func initDB() (*mongo.Client){
 	var uri = os.Getenv("MONGODB_URI")
 	client, err := mongo.Connect(context.TODO(), options.Client().ApplyURI(uri))
